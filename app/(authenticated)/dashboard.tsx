@@ -1,9 +1,18 @@
-import { StyleSheet, View, Text } from 'react-native';
-import { Button } from 'react-native-paper';
-import { useAuth } from '../../hooks/useAuth';
+import { StyleSheet, View } from 'react-native';
+import { Text, Button, FAB, Portal, ActivityIndicator } from 'react-native-paper';
+import { useAuth } from '../hooks/useAuth';
+import { useState, useMemo } from 'react';
+import TaskList from '../components/tasks/TaskList';
+import AddTaskModal from '../components/tasks/AddTaskModal';
+import TaskFilters, { FilterOption } from '../components/tasks/TaskFilters';
+import { useTasks } from '../hooks/useTasks';
+import { CreateTaskInput } from '../types/task';
 
 export default function DashboardScreen() {
   const { signOut, user } = useAuth();
+  const { tasks, loading, createTask, updateTask, deleteTask } = useTasks();
+  const [isAddTaskVisible, setIsAddTaskVisible] = useState(false);
+  const [currentFilter, setCurrentFilter] = useState<FilterOption>('all');
 
   const handleSignOut = async () => {
     try {
@@ -13,19 +22,58 @@ export default function DashboardScreen() {
     }
   };
 
+  const handleAddTask = async (input: CreateTaskInput) => {
+    try {
+      await createTask(input);
+      setIsAddTaskVisible(false);
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
+  };
+
+  const filteredTasks = useMemo(() => {
+    if (currentFilter === 'all') return tasks;
+    return tasks.filter(task => task.status === currentFilter);
+  }, [tasks, currentFilter]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
-      <Text style={styles.subtitle}>Welcome, {user?.email}</Text>
-      <Text style={styles.placeholder}>Task list will appear here in Phase 2</Text>
-      
-      <Button 
-        mode="outlined" 
-        onPress={handleSignOut} 
-        style={styles.button}
-      >
-        Sign Out
-      </Button>
+      <View style={styles.header}>
+        <Text style={styles.title}>My Tasks</Text>
+        <Button onPress={handleSignOut}>Sign Out</Button>
+      </View>
+
+      <TaskFilters
+        currentFilter={currentFilter}
+        onFilterChange={setCurrentFilter}
+      />
+
+      <View style={styles.content}>
+        {loading ? (
+          <ActivityIndicator style={styles.loader} />
+        ) : (
+          <TaskList
+            tasks={filteredTasks}
+            onUpdateTask={updateTask}
+            onDeleteTask={deleteTask}
+          />
+        )}
+      </View>
+
+      <AddTaskModal
+        visible={isAddTaskVisible}
+        onDismiss={() => setIsAddTaskVisible(false)}
+        onSubmit={handleAddTask}
+      />
+
+      <Portal>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => setIsAddTaskVisible(true)}
+          label="Add Task"
+        />
+      </Portal>
     </View>
   );
 }
@@ -33,24 +81,32 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: '#fff',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  content: {
+    flex: 1,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 24,
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  placeholder: {
-    marginBottom: 20,
-    fontStyle: 'italic',
-  },
-  button: {
-    marginTop: 24,
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 }); 

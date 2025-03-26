@@ -27,7 +27,16 @@
    - Implement task deletion
    - Add basic task filtering
 
-## Phase 3: AI Integration
+## Phase 3: Focus Mode
+1. Core Focus Features
+   - Add "Start Focus Mode" button when clicking on a task.
+   - Create focus mode UI 
+   - Create focus timer component
+   - Implement session tracking
+   - Add basic notification blocking
+
+
+## Phase 4: AI Integration
 1. AI Service Setup
    - Set up DeepSeek integration
    - Create AI service utilities
@@ -38,19 +47,6 @@
    - Add AI-powered task suggestions
    - Create task optimization features
    - Implement conversational task management
-
-## Phase 4: Focus Mode
-1. Core Focus Features
-   - Create focus timer component
-   - Implement session tracking
-   - Add basic notification blocking
-   - Create focus mode UI
-
-2. Focus Session Management
-   - Implement session storage
-   - Add session statistics
-   - Create break timer
-   - Add background sound options
 
 ## Phase 5: Analytics and Achievements
 1. Session Analytics

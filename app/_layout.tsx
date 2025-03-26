@@ -1,7 +1,7 @@
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { PaperProvider } from 'react-native-paper';
-import { lightTheme } from '../styles/theme';
+import { lightTheme } from './styles/theme';
 
 export default function RootLayout() {
   return (

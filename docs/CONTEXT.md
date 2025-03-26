@@ -152,48 +152,22 @@ This document outlines the user flow and key features of the productivity app, d
 - color: string
 
 ## Project Structure
-productivity-app/
-├── app/ # Main application directory
-│ ├── layout.tsx # Root layout component
-│ ├── index.tsx # Welcome screen
-│ ├── sign-up.tsx # Sign up screen
-│ ├── sign-in.tsx # Sign in screen
-│ ├── (authenticated)/ # Protected routes
-│ │ ├── dashboard.tsx # Main dashboard
-│ │ ├── focus.tsx # Focus mode
-│ │ ├── settings.tsx # User settings
-│ │ └── profile.tsx # User profile
-├── components/ # Reusable components
-│ ├── common/ # Shared components
-│ │ ├── Button.tsx
-│ │ ├── Input.tsx
-│ │ └── Card.tsx
-│ ├── tasks/ # Task-related components
-│ │ ├── TaskList.tsx
-│ │ ├── TaskItem.tsx
-│ │ └── TaskForm.tsx
-│ └── focus/ # Focus mode components
-│ ├── Timer.tsx
-│ └── Controls.tsx
-├── hooks/ # Custom React hooks
-│ ├── useAuth.ts
-│ ├── useTasks.ts
-│ └── useFocus.ts
-├── services/ # API and external services
-│ ├── supabase.ts # Supabase client
-│ ├── ai.ts # AI service integration
-│ └── notifications.ts # Notification handling
-├── utils/ # Utility functions
-│ ├── date.ts
-│ ├── validation.ts
-│ └── formatting.ts
-├── constants/ # App constants
-│ ├── colors.ts
-│ ├── config.ts
-│ └── types.ts
-├── styles/ # Global styles
-│ └── theme.ts
-└── assets/ # Images, fonts, etc.
-├── images/
-└── fonts/
+OneTaskAi/
+└── app/
+    ├── (authenticated)/
+    │   └── dashboard.tsx
+    ├── components/
+    │   └── tasks/
+    │       ├── TaskList.tsx
+    │       ├── TaskItem.tsx
+    │       └── AddTaskModal.tsx
+    ├── hooks/
+    │   ├── useAuth.ts
+    │   └── useTasks.ts
+    ├── types/
+    │   └── task.ts
+    ├── lib/
+    │   └── supabase.ts
+    └── config/
+        └── index.ts
 

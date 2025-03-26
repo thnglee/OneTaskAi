@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { Link, router } from 'expo-router';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from './hooks/useAuth';
 
 export default function SignUpScreen() {
   const { signUp } = useAuth();

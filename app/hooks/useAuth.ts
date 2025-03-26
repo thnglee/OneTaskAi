@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../services/supabase';
+import { supabase } from '../lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
 
 export function useAuth() {
@@ -60,4 +60,6 @@ export function useAuth() {
     signIn,
     signOut,
   };
-} 
+}
+
+export default useAuth; 

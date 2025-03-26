@@ -16,4 +16,6 @@ export const lightTheme = {
     backdrop: 'rgba(0, 0, 0, 0.5)',
     notification: '#dc3545',
   },
-}; 
+};
+
+export default lightTheme; 

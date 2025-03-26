@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, AppState, Platform } from 'react-native';
 import { Surface, Text, Button, Portal, Modal } from 'react-native-paper';
 import { Task } from '../../types/task';
 import FocusTimer from './FocusTimer';
+import * as Notifications from 'expo-notifications';
 
 interface FocusModeProps {
   task: Task;
@@ -13,16 +14,88 @@ interface FocusModeProps {
 export default function FocusMode({ task, onComplete, onClose }: FocusModeProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [duration, setDuration] = useState(25); // Default 25 minutes (Pomodoro)
+  const [appState, setAppState] = useState(AppState.currentState);
+
+  // Function to disable notifications
+  const disableNotifications = async () => {
+    await Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: false,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+  };
+
+  // Function to enable notifications
+  const enableNotifications = async () => {
+    await Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+  };
+
+  useEffect(() => {
+    // Request notification permissions and disable notifications immediately
+    const setupNotifications = async () => {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      
+      if (finalStatus !== 'granted') {
+        console.log('Failed to get notification permissions');
+        return;
+      }
+
+      // Disable notifications immediately when focus mode starts
+      await disableNotifications();
+    };
+
+    setupNotifications();
+
+    // Handle app state changes
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (appState.match(/inactive|background/) && nextAppState === 'active') {
+        // App came to foreground, keep notifications disabled
+        disableNotifications();
+      } else if (nextAppState.match(/inactive|background/)) {
+        // App went to background, keep notifications disabled
+        disableNotifications();
+      }
+      setAppState(nextAppState);
+    });
+
+    return () => {
+      subscription.remove();
+      // Re-enable notifications when component unmounts
+      enableNotifications();
+    };
+  }, [appState]);
 
   const handleComplete = () => {
+    // Re-enable notifications before completing
+    enableNotifications();
     onComplete(duration);
+  };
+
+  const handleClose = () => {
+    // Re-enable notifications before closing
+    enableNotifications();
+    onClose();
   };
 
   return (
     <Portal>
       <Modal
         visible={true}
-        onDismiss={onClose}
+        onDismiss={handleClose}
         contentContainerStyle={styles.modalContainer}
       >
         <Surface style={styles.container} elevation={4}>
@@ -42,7 +115,7 @@ export default function FocusMode({ task, onComplete, onClose }: FocusModeProps)
             <FocusTimer
               duration={duration}
               onComplete={handleComplete}
-              onCancel={onClose}
+              onCancel={handleClose}
             />
           </View>
 

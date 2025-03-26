@@ -6,7 +6,7 @@ import TaskItem from './TaskItem';
 
 interface TaskListProps {
   tasks: Task[];
-  onUpdateTask: (task: Task) => void;
+  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   onDeleteTask: (taskId: string) => void;
 }
 

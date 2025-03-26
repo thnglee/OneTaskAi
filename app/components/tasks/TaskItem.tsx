@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Text, IconButton, Chip } from 'react-native-paper';
-import { Task } from '../../types/task';
+import { Task, TaskStatus } from '../../types/task';
 import FocusMode from '../focus/FocusMode';
 
 interface TaskItemProps {
   task: Task;
-  onUpdate: (task: Task) => void;
+  onUpdate: (taskId: string, updates: Partial<Task>) => void;
   onDelete: (taskId: string) => void;
 }
 
@@ -14,9 +14,8 @@ export default function TaskItem({ task, onUpdate, onDelete }: TaskItemProps) {
   const [showFocusMode, setShowFocusMode] = useState(false);
 
   const toggleStatus = () => {
-    onUpdate({
-      ...task,
-      status: task.status === 'completed' ? 'pending' : 'completed',
+    onUpdate(task.id, {
+      status: task.status === TaskStatus.COMPLETED ? TaskStatus.PENDING : TaskStatus.COMPLETED,
     });
   };
 
@@ -36,14 +35,14 @@ export default function TaskItem({ task, onUpdate, onDelete }: TaskItemProps) {
         <Card.Content style={styles.content}>
           <View style={styles.taskInfo}>
             <IconButton
-              icon={task.status === 'completed' ? 'checkbox-marked' : 'checkbox-blank-outline'}
+              icon={task.status === TaskStatus.COMPLETED ? 'checkbox-marked' : 'checkbox-blank-outline'}
               onPress={toggleStatus}
             />
             <View style={styles.textContainer}>
               <Text
                 style={[
                   styles.title,
-                  task.status === 'completed' && styles.completedText,
+                  task.status === TaskStatus.COMPLETED && styles.completedText,
                 ]}
               >
                 {task.title}
@@ -74,7 +73,7 @@ export default function TaskItem({ task, onUpdate, onDelete }: TaskItemProps) {
             <IconButton 
               icon="timer" 
               onPress={() => setShowFocusMode(true)}
-              disabled={task.status === 'completed'}
+              disabled={task.status === TaskStatus.COMPLETED}
             />
             <IconButton icon="delete" onPress={() => onDelete(task.id)} />
           </View>

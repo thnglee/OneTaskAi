@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Task, CreateTaskInput } from '../types/task';
+import { Task, CreateTaskInput, TaskStatus } from '../types/task';
 import { useAuth } from './useAuth';
 
 export function useTasks() {
@@ -39,7 +39,7 @@ export function useTasks() {
       const newTask = {
         ...input,
         user_id: user?.id,
-        status: 'todo' as const,
+        status: TaskStatus.PENDING,
         priority: input.priority || 1,
         tags: input.tags || [],
         ai_priority_score: null,
@@ -63,20 +63,24 @@ export function useTasks() {
     }
   };
 
-  const updateTask = async (task: Task) => {
+  const updateTask = async (taskId: string, updates: Partial<Task>) => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('tasks')
         .update({
-          ...task,
+          ...updates,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', task.id);
+        .eq('id', taskId)
+        .eq('user_id', user?.id)
+        .select()
+        .single();
 
       if (error) throw error;
       setTasks((current) =>
-        current.map((t) => (t.id === task.id ? { ...task } : t))
+        current.map((task) => (task.id === taskId ? data : task))
       );
+      return data;
     } catch (err: any) {
       setError(err.message);
       console.error('Error updating task:', err);
@@ -89,10 +93,11 @@ export function useTasks() {
       const { error } = await supabase
         .from('tasks')
         .delete()
-        .eq('id', taskId);
+        .eq('id', taskId)
+        .eq('user_id', user?.id);
 
       if (error) throw error;
-      setTasks((current) => current.filter((t) => t.id !== taskId));
+      setTasks((current) => current.filter((task) => task.id !== taskId));
     } catch (err: any) {
       setError(err.message);
       console.error('Error deleting task:', err);

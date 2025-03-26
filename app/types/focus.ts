@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface FocusSession {
   id: string;
   task_id: string;
@@ -19,4 +21,9 @@ export interface UpdateFocusSessionInput {
   end_time?: string;
   completed?: boolean;
   notes?: string;
+}
+
+// Default export for Expo Router
+export default function FocusTypes() {
+  return null;
 } 

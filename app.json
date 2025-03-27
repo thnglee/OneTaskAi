@@ -9,14 +9,30 @@
     "notification": {
       "icon": "./assets/notification-icon.png",
       "color": "#ffffff",
-      "sounds": ["./assets/notification-sound.wav"]
+      "sounds": [
+        "./assets/notification-sound.wav"
+      ]
     },
     "android": {
-      "permissions": ["NOTIFICATIONS"]
+      "permissions": [
+        "NOTIFICATIONS",
+        "NOTIFICATIONS"
+      ],
+      "package": "com.anonymous.OneTaskAi"
     },
     "ios": {
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3340fe2e-d142-4f55-abe3-05aef3b06e50"
       }
     }
   }

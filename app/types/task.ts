@@ -7,16 +7,16 @@ export enum TaskStatus {
 
 export interface Task {
   id: string;
-  user_id: string;
   title: string;
   description?: string;
-  priority: number;
-  status: TaskStatus;
+  completed: boolean;
+  priority: number; // 0-3, where 0 is no priority
   due_date?: string;
+  location?: string;
+  tags?: string[];
   created_at: string;
   updated_at: string;
-  tags?: string[];
-  ai_priority_score?: number;
+  user_id: string;
 }
 
 export interface CreateTaskInput {
